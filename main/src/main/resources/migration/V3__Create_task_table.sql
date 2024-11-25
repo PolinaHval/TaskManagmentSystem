@@ -1,0 +1,9 @@
+CREATE TABLE tasks(
+    id BIGSERIAL NOT NULL UNIQUE PRIMARY KEY,
+    author_id BIGSERIAL NOT NULL REFERENCES users(id),
+    executor_id BIGSERIAL REFERENCES users(id),
+    heider VARCHAR(255) NOT NULL,
+    description VARCHAR(1000) NOT NULL,
+    status VARCHAR NOT NULL DEFAULT 'WAITING',
+    priority VARCHAR   NOT NULL DEFAULT 'MIDDLE'
+);
