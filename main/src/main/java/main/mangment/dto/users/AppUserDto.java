@@ -7,6 +7,12 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
+/**
+ * DTO для представления пользователя.
+ *
+ * <p>Класс AppUserDto используется для передачи данных пользователя,
+ * включая идентификатор, почта, пароль, роль.</p>
+ */
 @Value
 @Builder
 @AllArgsConstructor

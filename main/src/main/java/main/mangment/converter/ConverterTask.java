@@ -5,10 +5,21 @@ import main.mangment.dto.task.AppTaskDto;
 import main.mangment.model.Task;
 import org.springframework.stereotype.Component;
 
+/**
+ * Конвертер ConverterTask отвечает за преобразование объектов Task
+ * в объекты AppTaskDto.
+ */
 @Component
 @RequiredArgsConstructor
 public class ConverterTask {
   private final CommentConvert commentConvert;
+
+  /**
+   * Преобразует объект User в объект AppUserDto.
+   *
+   * @param task задача, которую необходимо преобразовать
+   * @return объект AppTaskDto или null
+   */
   public AppTaskDto toDto(Task task) {
     if (task == null) {
       return null;

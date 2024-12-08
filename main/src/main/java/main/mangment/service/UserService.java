@@ -8,6 +8,7 @@ import main.mangment.model.Role;
 import main.mangment.model.User;
 import main.mangment.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.List;
@@ -29,6 +30,7 @@ public class UserService {
         () -> new NotFoundException("Пользователь с email " + email + " не найден"));
 
   }
+
   public User login(final String email, final String password) {
     final User user = userRepository.findByEmail(email).orElseThrow(
         () -> new NotFoundException("Пользователь с email " + email + " не найден"));
@@ -51,6 +53,7 @@ public class UserService {
     return hashPassword.validatePassword(password, hashedPassword);
   }
 
+  @Transactional
   public User createUser(CreateUserDto createUserDto, Role role){
     final User user = User.builder()
         .email(createUserDto.getEmail())

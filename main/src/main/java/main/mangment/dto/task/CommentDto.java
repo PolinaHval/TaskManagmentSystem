@@ -9,6 +9,13 @@ import lombok.Value;
 
 import java.time.LocalDate;
 
+/**
+ * DTO для представления комментария.
+ *
+ * <p>Класс CommentDto используется для передачи данных комментария,
+ * включая комментарий, автора и дату создания комментария.</p>
+ *
+ */
 @Value
 @Builder
 @AllArgsConstructor

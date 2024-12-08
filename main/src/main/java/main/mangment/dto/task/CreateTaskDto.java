@@ -11,6 +11,13 @@ import main.mangment.model.Status;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * DTO для создания задачии.
+ *
+ * <p>Класс CreateTaskDto передает данные для создания задачи,
+ * а именно заголовок, описание, статус, приоритет и почта исполнителя.</p>
+ *
+ */
 @Value
 @Builder
 @AllArgsConstructor
@@ -18,9 +25,21 @@ import javax.validation.constraints.NotBlank;
 @Schema(description = "CommentDto для комментария")
 public class CreateTaskDto {
 
+  /**
+   * Заголовок
+   *
+   * <p>Заголовок не может быть пустым.</p>
+   *
+   */
   @NotBlank
   String heider;
 
+  /**
+   * Описание
+   *
+   * <p>Описание не может быть пустым.</p>
+   *
+   */
   @NotBlank
   String description;
 
@@ -28,6 +47,12 @@ public class CreateTaskDto {
 
   Priority priority;
 
+  /**
+   * Почта исполнителя.
+   *
+   * <p>Почта исполнителя не может быть пустой.</p>
+   *
+   */
   @NotBlank
   String executorEmail;
 }
