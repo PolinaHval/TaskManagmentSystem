@@ -8,6 +8,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * DTO для списка задач.
+ *
+ * <p>Класс TaskListDto передает данные для списка задач,
+ * а именно список задач, всего страниц, всего элементов.</p>
+ *
+ */
 @Builder
 @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 @AllArgsConstructor

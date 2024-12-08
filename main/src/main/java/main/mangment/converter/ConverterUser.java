@@ -7,10 +7,23 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Конвертер ConverterUser отвечает за преобразование объектов User
+ * в объекты AppUserDto.
+ *
+ * <p>Класс предоставляет методы для преобразования как одного пользователя, так и списка пользователей.</p>
+ */
 @Component
 @RequiredArgsConstructor
 public class ConverterUser {
 
+  /**
+   * Преобразует список объектов User в список объектов AppUserDto.
+   *
+   * @param users список пользователей, который необходимо преобразовать
+   * @return список объектов AppUserDto, соответствующий переданному списку пользователей,
+   *         или null
+   */
   public List<AppUserDto> toDto(List<User> users) {
     if (users == null) {
       return null;
@@ -25,6 +38,13 @@ public class ConverterUser {
     return list;
   }
 
+  /**
+   * Преобразует объект User в объект AppUserDto.
+   *
+   * @param user пользователь, который необходимо преобразовать
+   * @return объект  AppUserDto, соответствующий переданному пользователю,
+   *         или null
+   */
   public AppUserDto toDto(User user) {
     if (user == null) {
       return null;

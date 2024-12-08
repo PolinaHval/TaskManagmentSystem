@@ -11,12 +11,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Сервис аутентификации пользователей, реализующий интерфейс UserDetailsService.
+ * Этот сервис отвечает за загрузку данных о пользователе по его электронной почте.
+ * @requiredArgsConstructor генерирует конструктор для всех финальных полей.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
 
   private final UserService userService;
 
+  /**
+   * Загружает данные о пользователе по указанной электронной почте.
+   * @param email адрес электронной почты пользователя
+   * @return объект UserDetails, содержащий информацию о пользователе
+   * @throws UsernameNotFoundException если пользователь с указанной электронной почтой не найден
+   */
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
      final main.mangment.model.User user = userService.getUserEmail(email);

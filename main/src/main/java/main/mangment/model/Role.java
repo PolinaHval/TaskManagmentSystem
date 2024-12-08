@@ -12,6 +12,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Класс Role представляет собой сущность роль
+ *
+ * <p>Роль содержит идентификатор и имя.</p>
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -20,10 +25,16 @@ import javax.persistence.Table;
 @Table(name = "roles")
 public class Role {
 
+  /**
+   * Уникальный идентификатор комментария.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   long id;
 
+  /**
+   * Имя роли.
+   */
   @Column(name = "role")
   String name;
 }

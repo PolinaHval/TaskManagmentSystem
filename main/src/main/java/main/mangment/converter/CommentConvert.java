@@ -8,10 +8,20 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Конвертер CommentConvert отвечает за преобразование объектов Comment
+ * в объекты CommentDto.
+ */
 @Component
 @RequiredArgsConstructor
 public class CommentConvert {
 
+  /**
+   * Преобразует список объектов Comment в список объектов CommentDto.
+   *
+   * @param comments список пользователей, который необходимо преобразовать
+   * @return список объектов CommentDto или null
+   */
   public List<CommentDto> toDto(List<Comment> comments ) {
     if (comments == null) {
       return null;

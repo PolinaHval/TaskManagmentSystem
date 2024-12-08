@@ -19,6 +19,7 @@ hashSecret: SECRET
 complexity: 12
 
 jwtSecret: "SECRET"
+allowed-origin: "http://localhost:8080"
 
 
 

@@ -11,6 +11,14 @@ import main.mangment.model.Status;
 
 import java.util.List;
 
+
+/**
+ * DTO для представления задачи.
+ *
+ * <p>Класс AppTaskDto используется для передачи данных задачи,
+ * включая заголовок, описание, статус, приоритет, автора и исполнителя,
+ * а также список комментариев.</p>
+ */
 @Value
 @Builder
 @AllArgsConstructor

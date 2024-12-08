@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,6 +30,12 @@ import static main.mangment.specification.TaskSpecification.findByExecutor;
 import static main.mangment.specification.TaskSpecification.findByPriority;
 import static main.mangment.specification.TaskSpecification.findByStatus;
 
+/**
+ * Сервис TaskService предоставляет бизнес-логику для управления задачами.
+ *
+ * <p>Сервис включает в себя методы для создания, удаления, получения и изменения задач,
+ * а также для добавления комментариев и фильтрации задач по различным параметрам.</p>
+ */
 @Service
 @RequiredArgsConstructor
 public class TaskService {
@@ -37,6 +44,16 @@ public class TaskService {
   private final UserRepository userRepository;
   private final CommentRepository commentRepository;
 
+
+  /**
+   * Создает новую задачу на основе предоставленных данных.
+   *
+   * @param createTaskDto данные для создания задачи
+   * @param user автор задачи
+   * @param userExecutor исполнитель задачи
+   * @return созданная задача
+   */
+  @Transactional
   public Task createTask(CreateTaskDto createTaskDto, User user, User userExecutor){
     Task task = Task.builder()
         .heider(createTaskDto.getHeider())
@@ -51,6 +68,15 @@ public class TaskService {
     return task;
   }
 
+  /**
+   * Удаляет задачу по заданному идентификатору, если текущий пользователь является автором задачи.
+   *
+   * @param taskId идентификатор задачи, которую необходимо удалить
+   * @param user текущий пользователь
+   * @throws NotFoundException если задача с указанным идентификатором не найдена
+   * @throws NotEnoughRightsException если текущий пользователь не является автором задачи
+   */
+  @Transactional
   public void delete(long taskId, User user) {
     Task task = taskRepository.findById(taskId)
         .orElseThrow(() -> new NotFoundException("Невозможно обновить задачу. Задача с id " + taskId +
@@ -63,12 +89,30 @@ public class TaskService {
     }
   }
 
+  /**
+   * Получает задачу по заданному идентификатору.
+   *
+   * @param taskId идентификатор задачи
+   * @return задача с указанным идентификатором
+   * @throws NotFoundException если задача с указанным идентификатором не найдена
+   */
   public Task getTaskById(long taskId) {
     return taskRepository.findById(taskId)
         .orElseThrow(() -> new NotFoundException("Невозможно обновить задачу. Задача с id " + taskId +
         " не найдена"));
   }
 
+  /**
+   * Изменяет статус задачи, если текущий пользователь является автором задачи.
+   *
+   * @param taskId идентификатор задачи, статус которой необходимо изменить
+   * @param status новый статус задачи
+   * @param user текущий пользователь
+   * @return обновленная задача
+   * @throws NotFoundException если задача с указанным идентификатором не найдена
+   * @throws NotEnoughRightsException если текущий пользователь не является автором задачи
+   */
+  @Transactional
   public Task changeTaskStatus(long taskId, Status status, User user) {
     Task task = taskRepository.findById(taskId)
         .orElseThrow(() -> new NotFoundException("Невозможно обновить задачу. Задача с id " + taskId +
@@ -82,6 +126,17 @@ public class TaskService {
     }
   }
 
+  /**
+   * Назначает исполнителя для задачи, если текущий пользователь является автором задачи.
+   *
+   * @param taskId идентификатор задачи, для которой необходимо назначить исполнителя
+   * @param userExecutor пользователь, который будет назначен исполнителем
+   * @param userAuthor автор задачи
+   * @return обновленная задача
+   * @throws NotFoundException если задача с указанным идентификатором не найдена
+   * @throws NotEnoughRightsException если текущий пользователь не является автором задачи
+   */
+  @Transactional
   public Task setExecutorTask(long taskId, User userExecutor, User userAuthor) {
     Task task = taskRepository.findById(taskId)
         .orElseThrow(() -> new NotFoundException("Невозможно обновить задачу. Задача с id " + taskId +
@@ -95,6 +150,15 @@ public class TaskService {
     }
   }
 
+  /**
+   * Добавляет комментарий к задаче.
+   *
+   * @param createCommentsDto данные для создания комментария
+   * @param userAuthor автор комментария
+   * @return задача, к которой был добавлен комментарий
+   * @throws NotFoundException если задача с указанным идентификатором не найдена
+   */
+  @Transactional
   public Task addComments(CreateCommentsDto createCommentsDto, User userAuthor) {
     Task task = taskRepository.findById(createCommentsDto.getTaskId())
         .orElseThrow(() -> new NotFoundException("Невозможно обновить задачу. Задача с id " +
@@ -110,13 +174,34 @@ public class TaskService {
     return task;
   }
 
+  /**
+   * Получает список задач по заданным фильтрам.
+   *
+   * @param authorId идентификатор автора задач, возможен null
+   * @param executorId идентификатор исполнителя задач, возможен null
+   * @param status статус задач, возможен null
+   * @param priority приоритет задач, возможен null
+   * @param pageable параметры пагинации и сортировки
+   * @return страница задач, соответствующих заданным фильтрам
+   */
   public Page<Task> getTasksByFilters(Long authorId, Long executorId,
                                          Status status, Priority priority, Pageable pageable) {
     Specification<Task> specification = searchParametersToSpecification(authorId, executorId, status, priority);
     return taskRepository.findAll(specification, pageable);
   }
 
-  private Specification<Task> searchParametersToSpecification(Long authorId, Long executorId,
+  /**
+   * Преобразует параметры поиска в спецификацию для фильтрации задач.
+   *
+   * @param authorId идентификатор автора задач (может быть null)
+   * @param executorId идентификатор исполнителя задач (может быть null)
+   * @param status статус задач (может быть null)
+   * @param priority приоритет задач (может быть null)
+   * @return спецификация для фильтрации задач
+   * @throws NotFoundException если пользователь с указанным идентификатором не найден
+   */
+  @Transactional
+  public Specification<Task> searchParametersToSpecification(Long authorId, Long executorId,
                                                               Status status, Priority priority) {
     User author = new User();
     User executor = new User();
@@ -143,6 +228,17 @@ public class TaskService {
         .orElse((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
   }
 
+  /**
+   * Обновляет задачу на основе предоставленного DTO, идентификатора задачи и автора.
+   *
+   * @param updateTaskDto DTO для обновления задачи
+   * @param taskId идентификатор задачи
+   * @param  user автор
+   * @return обновленная задача
+   * @throws NotFoundException если задача с указанным идентификатором не найдена
+   * @throws NotEnoughRightsException если текущий пользователь не является автором задачи
+   */
+  @Transactional
   public Task updateTask(UpdateTaskDto updateTaskDto, long taskId, User user) {
     final Task task = taskRepository.findById(taskId)
         .orElseThrow(() -> new NotFoundException("Невозможно обновить задачу. Задача с id " +
