@@ -2,7 +2,7 @@ package main.mangment.config.filter;
 
 import lombok.RequiredArgsConstructor;
 import main.mangment.config.jwt.Jwt;
-import main.mangment.config.service.AuthService;
+import main.mangment.config.service.AuthUserDetailsService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +15,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+
 /**
  * Фильтр JWT для проверки и аутентификации пользователей на основе токена.
  * Этот фильтр извлекает JWT из заголовка запроса и проверяет его на валидность.
@@ -27,7 +28,7 @@ public class JwtFilter extends GenericFilterBean {
 
   public static final String AUTHORIZATION = "Authorization";
   private final Jwt jwtProvider;
-  private final AuthService customUserDetailsService;
+  private final AuthUserDetailsService customUserDetailsService;
 
   /**
    * Метод фильтрации, проверяющий наличие и валидность JWT в запросе.
@@ -42,7 +43,7 @@ public class JwtFilter extends GenericFilterBean {
 
     String token = getTokenFromRequest((HttpServletRequest)servletRequest);
 
-    if(token != null && jwtProvider.validateToken(token)){
+    if(token != null && jwtProvider.validateToken(token)) {
       String userEmail = jwtProvider.getEmailFromToken(token);
       UserDetails customUserDetails = customUserDetailsService.loadUserByUsername(userEmail);
       UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(customUserDetails,
@@ -58,7 +59,7 @@ public class JwtFilter extends GenericFilterBean {
    * @param request HttpServletRequest, из которого извлекается токен
    * @return Строка токена или null, если токен отсутствует
    */
-  private String getTokenFromRequest(HttpServletRequest request){
+  private String getTokenFromRequest(HttpServletRequest request) {
 
     String bearer = request.getHeader(AUTHORIZATION);
 

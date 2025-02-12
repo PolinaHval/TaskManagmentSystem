@@ -19,6 +19,11 @@ hashSecret: SECRET
 complexity: 12
 
 jwtSecret: "SECRET"
+jwtSecretRefresh: "TASK_SECRET"
+
+jwt.jwtExp: 900000
+jwt.refreshExp: 86400000
+
 allowed-origin: "http://localhost:8080"
 
 

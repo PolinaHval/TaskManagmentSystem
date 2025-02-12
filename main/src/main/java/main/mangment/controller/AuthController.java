@@ -2,11 +2,11 @@ package main.mangment.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import main.mangment.config.jwt.Jwt;
 import main.mangment.dto.users.AuthResultDto;
 import main.mangment.dto.users.CredentialsUserDto;
-import main.mangment.model.User;
-import main.mangment.service.UserService;
+import main.mangment.dto.users.RefreshJwtRequestDto;
+import main.mangment.facade.AuthFacade;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,20 +26,40 @@ import org.springframework.web.bind.annotation.RestController;
     "Доступно для всех пользователей")
 public class AuthController {
 
-  private final UserService userService;
-  private final Jwt jwt;
+  private final AuthFacade authFacade;
 
   /**
    * Аутентификация пользователя.
-   * <p>Принимает учетные данные пользователя в виде CredentialsUserDto и
-   * возвращает AuthResultDto с JWT-токеном в случае успешной аутентификации.</p>
-   * @param credentialsUserDto объект с учетными данными пользователя (логин и пароль)
-   * @return объект AuthResultDto с JWT-токеном
+   *
+   * @param credentialsUserDto объект с учетными данными пользователя
+   * @return результат аутентификации
    */
   @PostMapping()
-  protected AuthResultDto authorize(@RequestBody final CredentialsUserDto credentialsUserDto){
-    User user = userService.login(credentialsUserDto.getEmail(), credentialsUserDto.getPassword());
-    String token = jwt.generateToken(user.getEmail());
-    return new AuthResultDto(token);
+  protected AuthResultDto authorize(@RequestBody final CredentialsUserDto credentialsUserDto) {
+  return authFacade.login(credentialsUserDto.getEmail(), credentialsUserDto.getPassword());
  }
+
+  /**
+   * Выход пользователя из системы.
+   *
+   * @param userId идентификатор пользователя
+   * @return ответ о выходе из системы
+   */
+  @PostMapping("/logout")
+  public ResponseEntity<?> logoutUser(@RequestBody long userId) {
+    authFacade.deleteByUserId(userId);
+    return ResponseEntity.ok().body("User logged out");
+  }
+
+  /**
+   * Обновление токена доступа.
+   *
+   * @param request объект с запросом на обновление токена
+   * @return новый токен доступа
+   */
+  @PostMapping("refresh")
+  protected AuthResultDto getNewRefreshToken(@RequestBody final RefreshJwtRequestDto request) {
+    System.out.println(request.getRefreshToken());
+    return authFacade.refresh(request.getRefreshToken());
+  }
 }

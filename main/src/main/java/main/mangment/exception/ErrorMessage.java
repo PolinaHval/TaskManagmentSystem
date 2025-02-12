@@ -3,7 +3,9 @@ package main.mangment.exception;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-
+/**
+ * Сообщение об ошибке.
+ */
 @Data
 @Schema(description = "Для описания ошибки")
 public class ErrorMessage {

@@ -7,12 +7,10 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 /**
@@ -24,7 +22,6 @@ import java.util.Date;
  */
 @Component
 public class Jwt {
-
   /**
    * Секретный ключ для подписи JWT, внедряется из файла application.yaml
    */
@@ -32,14 +29,21 @@ public class Jwt {
   private String jwtSecret;
 
   /**
+   * Время жизни JWT в миллисекундах.
+   */
+  @Value("${jwt.jwtExp}")
+  private int JWT_EXP;
+
+  /**
    * Генерирует JWT token с временем жизни 15 минут
    * @param email адрес электронной почты для использования в токене
    * @return сгенерированный JWT как строка
    */
-  public String generateToken(String email) {
+  public String generateAccessToken(String email) {
     return Jwts.builder()
         .setSubject(email)
-        .setExpiration(Date.from(Instant.now().plus(15, ChronoUnit.MINUTES)))
+        .setIssuedAt(new Date((new Date()).getTime()))
+        .setExpiration(new Date((new Date()).getTime() + JWT_EXP))
         .signWith(SignatureAlgorithm.HS512, jwtSecret)
         .compact();
   }
@@ -64,7 +68,6 @@ public class Jwt {
     } catch (Exception e) {
       System.out.println("Token validation error: " + e.getMessage());
     }
-
     return false;
   }
 

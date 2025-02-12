@@ -79,4 +79,17 @@ public class GlobalExceptionHandler {
         exception.printStackTrace();
         return new ErrorMessage("Недостаточно прав. " + exception.getMessage());
     }
+
+    /**
+     * Обработчик исключений, связанных с невалидным токеном.
+     *
+     * @param exception исключение, вызванное невалидным токеном
+     * @return объект ErrorMessage с сообщением о недостатке прав
+     */
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage AuthException(AuthException exception) {
+        exception.printStackTrace();
+        return new ErrorMessage("Невалилный токен");
+    }
 }
