@@ -1,0 +1,6 @@
+CREATE TABLE refresh(
+    token_id BIGSERIAL NOT NULL UNIQUE PRIMARY KEY,
+    user_id BIGSERIAL NOT NULL REFERENCES users(id),
+    ref_token VARCHAR(100) NOT NULL,
+    exp_date TIMESTAMP NOT NULL
+);

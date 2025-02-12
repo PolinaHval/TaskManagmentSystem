@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import main.mangment.config.filter.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,8 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *
  * <p>Этот класс настраивает параметры безопасности</p>
  */
-//@EnableWebSecurity
-//@EnableMethodSecurity
+
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -42,17 +38,17 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
     http
-        .httpBasic().disable()
+        .cors().and()
         .csrf().disable()
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .authorizeHttpRequests((requests) -> requests
-            .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-            .antMatchers("/api/v1/auth").permitAll()
-            .anyRequest().authenticated())
-        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-        .logout(LogoutConfigurer::permitAll);
+        .authorizeRequests()
+        .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/v1/auth/**").permitAll()
+        .anyRequest().authenticated()
+        .and().sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+    http.addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+    http.headers().frameOptions().disable();
+    
     return http.build();
   }
 

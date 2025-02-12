@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class AuthService implements UserDetailsService {
+public class AuthUserDetailsService implements UserDetailsService {
 
   private final UserService userService;
 
